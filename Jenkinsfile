@@ -34,13 +34,19 @@ pipeline {
             }
         }
 
-        stage('Tag & Push Image to ECR') {
-            steps {
-                sh """
-                    docker tag $IMAGE_NAME:latest $ECR_REPO:latest
-                    docker push $ECR_REPO:latest
-                """
-            }
-        }
+    stage('Tag & Push Image to ECR') {
+        steps {
+            sh """
+            docker tag my-cicd-app:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-cicd-app:latest
+            docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-cicd-app:latest
+            """
+    }
+}
+
+    stage('Deploy to ECS') {
+        steps {
+            sh """
+            aws ecs update-service --cluster my-cicd-cluster1 --service my-cicd-service --force-new-deployment --region ${AWS_REGION}
+            """
     }
 }
