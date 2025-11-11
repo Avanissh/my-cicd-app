@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         AWS_REGION = "ap-south-2"
-        ECR_REPO = "123456789012.dkr.ecr.ap-south-2.amazonaws.com/my-cicd-app"
+        ECR_REPO ="037276000336.dkr.ecr.ap-south-2.amazonaws.com/my-cicd-app"
         IMAGE_NAME = "my-cicd-app"
     }
 
