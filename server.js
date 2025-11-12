@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
       <li>AWS ECR (Registry)</li>
       <li>AWS ECS Fargate (Deployment)</li>
     </ul>
-    <p><b>Created by:</b>AVANISSH GK</p>
+    <p><b>Created by:</b>AVANISSH GK <3</p>
     <img src="https://play-lh.googleusercontent.com/7kNwdvndwJd-Gm-9aGLTDrVfG843u05It78G8JPBwLtEVfVpmOR_5EWr9EXOhaKRsAn_" width="350" />
   `);
 });
