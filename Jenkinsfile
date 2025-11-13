@@ -3,15 +3,14 @@ pipeline {
 
     environment {
         AWS_REGION = "ap-south-2"
-        ECR_REPO = "my-cicd-app"
-        CLUSTER = "myapp-cluster"
-        SERVICE = "my-cicd-app-service"
+        ECR_URL = "037276000336.dkr.ecr.ap-south-2.amazonaws.com/my-cicd-app"
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/Avanissh/my-cicd-app.git'
+                git branch: 'main',
+                    url: 'https://github.com/Avanissh/my-cicd-app.git'
             }
         }
 
@@ -23,25 +22,26 @@ pipeline {
 
         stage('Login to AWS ECR') {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-cred']]) {
+                withCredentials([usernamePassword(credentialsId: 'aws-cred',
+                        usernameVariable: 'AWS_ACCESS_KEY_ID',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                     sh '''
                         aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
                         aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
                         aws configure set default.region ${AWS_REGION}
 
                         aws ecr get-login-password --region ${AWS_REGION} \
-                        | docker login --username AWS --password-stdin \
-                        ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}
+                          | docker login --username AWS --password-stdin ${ECR_URL}
                     '''
                 }
             }
         }
 
-        stage('Tag & Push Image to ECR') {
+        stage('Push Image to ECR') {
             steps {
                 sh '''
-                    docker tag my-cicd-app:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:latest
-                    docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:latest
+                    docker tag my-cicd-app:latest ${ECR_URL}:latest
+                    docker push ${ECR_URL}:latest
                 '''
             }
         }
@@ -49,15 +49,13 @@ pipeline {
         stage('Deploy to ECS') {
             steps {
                 sh '''
-                    echo "Deploying latest image to ECS..."
                     aws ecs update-service \
-                        --cluster ${CLUSTER} \
-                        --service ${SERVICE} \
-                        --force-new-deployment \
-                        --region ${AWS_REGION}
+                      --cluster my-cicd-cluster \
+                      --service my-cicd-service \
+                      --force-new-deployment \
+                      --region ${AWS_REGION}
                 '''
             }
         }
-    } // ✅ close stages
-
-} // ✅ close pipeline
+    }
+}
