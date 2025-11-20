@@ -12,8 +12,8 @@ app.get('/', (req, res) => {
       <li>AWS ECR (Registry)</li>
       <li>AWS ECS Fargate (Deployment)</li>
     </ul>
-    <p><b>Created by:</b>AVANISSH GK <3</p>
-    <p>HELLO DHIVYA MAM!!!!</p?
+    <p><b>Created by:</b>AVANISSH GK</p>
+    <p>HELLO DHIVYA MAM!!!!</p>
   `);
 });
 
